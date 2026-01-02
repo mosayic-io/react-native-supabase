@@ -1,49 +1,50 @@
-import { spacing, typography } from "@/lib/theme";
-import { Image, ImageBackground, StyleSheet, Text } from "react-native";
+import { useMemo } from 'react'
+import { StyleSheet, View } from 'react-native'
 
-export default function HomeScreen() {
+import { Text } from '@/src/components/ui'
+import { useColors } from '@/src/hooks/useColors'
+import { useAuthStore } from '@/src/features/auth'
+import { spacing, type Colors } from '@/src/lib/theme'
+import { ScreenErrorBoundary } from '@/src/components/error'
+
+const createStyles = (colors: Colors) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      padding: spacing.lg,
+      backgroundColor: colors.background,
+    },
+    title: {
+      marginBottom: spacing.sm,
+    },
+    subtitle: {
+      textAlign: 'center',
+    },
+  })
+
+function HomeScreen() {
+  const colors = useColors()
+  const styles = useMemo(() => createStyles(colors), [colors])
+  const user = useAuthStore((state) => state.user)
+
   return (
-    <ImageBackground
-      source={require("@/assets/images/bg-gradient.jpg")}
-      style={styles.container}
-      resizeMode="cover"
-    >
-      <Image
-        source={require("@/assets/images/splash-icon.png")}
-        style={styles.logo}
-        resizeMode="contain"
-      />
-      <Text style={styles.title}>You&apos;re all set!</Text>
-      <Text style={styles.subtitle}>
-        Your development environment is ready. Now try using the AI agent to
-        create something!
+    <View style={styles.container}>
+      <Text variant="h1" style={styles.title}>
+        Welcome!
       </Text>
-      <Text style={[styles.subtitle, { marginTop: spacing.sm }]}>
-        Don&apos;t be shy, this project is just a fun way to explore
-        the AI agents capabilities, we&apos;ll throw it away afterwards.
+      <Text variant="body" color="secondary" style={styles.subtitle}>
+        Logged in as {user?.email}
       </Text>
-    </ImageBackground>
-  );
+    </View>
+  )
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    padding: spacing.lg,
-  },
-  logo: {
-    width: 200,
-    height: 100,
-    marginBottom: spacing.xl,
-  },
-  title: {
-    ...typography.title,
-    marginBottom: spacing.sm,
-  },
-  subtitle: {
-    ...typography.subtitle,
-    textAlign: "center",
-  },
-});
+export default function Home() {
+  return (
+    <ScreenErrorBoundary screenName="Home">
+      <HomeScreen />
+    </ScreenErrorBoundary>
+  )
+}
