@@ -23,16 +23,16 @@ ALTER TABLE public.posts ENABLE ROW LEVEL SECURITY;
 
 -- RLS policies
 CREATE POLICY "Users can read their own posts" ON public.posts
-  FOR SELECT USING (auth.uid() = user_id);
+  FOR SELECT TO authenticated USING (auth.uid() = user_id);
 
 CREATE POLICY "Users can insert their own posts" ON public.posts
-  FOR INSERT WITH CHECK (auth.uid() = user_id);
+  FOR INSERT TO authenticated WITH CHECK (auth.uid() = user_id);
 
 CREATE POLICY "Users can update their own posts" ON public.posts
-  FOR UPDATE USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
+  FOR UPDATE TO authenticated USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
 
 CREATE POLICY "Users can delete their own posts" ON public.posts
-  FOR DELETE USING (auth.uid() = user_id);
+  FOR DELETE TO authenticated USING (auth.uid() = user_id);
 
 -- Trigger for updated_at
 CREATE TRIGGER update_posts_updated_at
